@@ -14,6 +14,10 @@ using TMPro;
 
 public class SteamLobby : MonoBehaviour
 {
+    //reference to this script such that it can be used
+    //anywhere at any time
+    public static SteamLobby Instance;
+
     protected Callback<LobbyCreated_t> LobbyCreated;
     protected Callback<GameLobbyJoinRequested_t> JoinLobby;
     protected Callback<LobbyEnter_t> EnterLobby;
@@ -30,6 +34,10 @@ public class SteamLobby : MonoBehaviour
         {
             Debug.LogError("Steam is not initialized");
             return;
+        }
+        if (Instance == null)
+        {
+            Instance = this;
         }
 
         manager = GetComponent<CustomNetworkManager>();
@@ -81,7 +89,7 @@ public class SteamLobby : MonoBehaviour
         //Everyone
         CurrentLobbyID = callback.m_ulSteamIDLobby;
         CSteamID steamID = new CSteamID(callback.m_ulSteamIDLobby);
-        LobbyTextName.text = SteamMatchmaking.GetLobbyData(steamID, "name");
+        //LobbyTextName.text = SteamMatchmaking.GetLobbyData(steamID, "name");
 
         //Clients
         if (NetworkServer.active)
