@@ -22,4 +22,9 @@ public class CustomNetworkManager : NetworkManager
         //end if
     }
 
+    public void StartGame(string SceneName)
+    {
+        ServerChangeScene(SceneName);
+    }
+
 }

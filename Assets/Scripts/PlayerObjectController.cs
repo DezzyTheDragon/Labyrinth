@@ -26,6 +26,26 @@ public class PlayerObjectController : NetworkBehaviour
         }
     }
 
+    private void Start()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    public void CanStartGame(string SceneName)
+    {
+        //if (hasAuthority)
+        if(isOwned)
+        {
+            CmdCanStartGame(SceneName);
+        }
+    }
+
+    [Command]
+    public void CmdCanStartGame(string SceneName)
+    {
+        manager.StartGame(SceneName);
+    }
+
     public override void OnStartAuthority()
     {
         CmdSetPlayerName(SteamFriends.GetPersonaName().ToString());
