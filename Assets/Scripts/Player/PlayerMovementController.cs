@@ -4,27 +4,52 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 using UnityEngine.SceneManagement;
+using Mirror.Examples.AdditiveLevels;
+using System.Threading;
 
 public class PlayerMovementController : NetworkBehaviour
 {
     public GameObject playerModel;
-    
+    public GameObject headObject;
+    public GameObject playerCamera;
+
+    [SerializeField]
+    private float movementSpeed = 1.0f;
+    [SerializeField]
+    private float sensitivity = 1.0f;
+
+    private bool mouseLocked = false;
+    private Vector2 cameraRotation;
+
+
     private Controlls playerControlls;
+    private CharacterController characterController;
 
     private void Awake()
     {
         playerControlls = new Controlls();
         playerControlls.PlayerControlls.Enable();
+        characterController = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
         if (SceneManager.GetActiveScene().name == "PrototypeMap")
         {
+            
             if (!playerModel.activeSelf)
             {
                 playerModel.SetActive(true);
+                if (isOwned)
+                {
+                    playerCamera.SetActive(true);
+                }
+                else
+                {
+                    playerCamera.SetActive(false);
+                }
                 SetPosition();
+                ToggleMouse();
             }
             //if (hasAuthority)
             if(isOwned)
@@ -34,25 +59,61 @@ public class PlayerMovementController : NetworkBehaviour
         }
     }
 
+    public void Escape(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {
+            Application.Quit();
+            ToggleMouse();
+        }
+    }
+
+    private void ToggleMouse()
+    {
+        if (mouseLocked)
+        {
+            mouseLocked = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            mouseLocked = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     //Set the player position when spawning
     public void SetPosition()
     {
+        characterController.enabled = false;
         transform.position = new Vector3(Random.Range(-5, 5), 0.1f, Random.Range(-5, 5));
+        characterController.enabled = true;
     }
 
-    //TODO: Refine the player movement and implement the first person aspect to it
-    //      This is for testing the networking bit of player movement
-    //=============================================================================
     private void HandleInput()
     {
-        HandleMovement(); 
+        HandleMovement();
+        HandleCamera();
+    }
+
+    private void HandleCamera()
+    {
+        cameraRotation.x += playerControlls.PlayerControlls.MouseX.ReadValue<float>();
+        cameraRotation.y += playerControlls.PlayerControlls.MouseY.ReadValue<float>();
+        cameraRotation.y = Mathf.Clamp(cameraRotation.y, -90f / sensitivity, 90f / sensitivity);
+        gameObject.transform.localRotation = Quaternion.Euler(0, cameraRotation.x * sensitivity, 0);
+        headObject.transform.localRotation = Quaternion.Euler(-cameraRotation.y * sensitivity, 0, 0);
     }
 
     private void HandleMovement()
     {
         Vector2 input = playerControlls.PlayerControlls.Movement.ReadValue<Vector2>();
-        Vector3 moveDirection = new Vector3(input.x, 0.0f, input.y);
-        transform.position += moveDirection * 0.1f;
+        Vector3 moveForward = transform.forward * input.y;
+        Vector3 moveRight = transform.right * input.x;
+        Vector3 direction = (moveForward + moveRight).normalized * movementSpeed;
+        direction.y = 0;
+        characterController.Move(direction * Time.deltaTime);
     }
-    //=============================================================================
 }
