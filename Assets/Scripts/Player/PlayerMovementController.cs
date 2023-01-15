@@ -6,6 +6,8 @@ using Mirror;
 using UnityEngine.SceneManagement;
 using Mirror.Examples.AdditiveLevels;
 using System.Threading;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.HID;
 
 public class PlayerMovementController : NetworkBehaviour
 {
@@ -36,7 +38,7 @@ public class PlayerMovementController : NetworkBehaviour
     {
         if (SceneManager.GetActiveScene().name == "PrototypeMap")
         {
-            
+
             if (!playerModel.activeSelf)
             {
                 playerModel.SetActive(true);
@@ -52,8 +54,8 @@ public class PlayerMovementController : NetworkBehaviour
                 ToggleMouse();
             }
             //if (hasAuthority)
-            if(isOwned)
-            { 
+            if (isOwned)
+            {
                 HandleInput();
             }
         }
@@ -64,8 +66,31 @@ public class PlayerMovementController : NetworkBehaviour
         if (context.phase == InputActionPhase.Performed)
         {
             Application.Quit();
-            ToggleMouse();
+            //ToggleMouse();
         }
+    }
+
+    public void Shoot(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed && isOwned)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, Mathf.Infinity))
+            {
+                if (hit.transform.tag == "Enemy")
+                {
+                    //Debug.Log("Enemy Hit: " + hit.transform.name);
+                    CmdShoot(hit.transform.gameObject);
+                }
+            }
+        }
+    }
+
+    [Command]
+    public void CmdShoot(GameObject enemy)
+    {
+        Debug.Log("Enemy Hit: " + enemy.name);
+        enemy.GetComponent<EnemyHealth>().DamageEnemy(1);
     }
 
     private void ToggleMouse()
