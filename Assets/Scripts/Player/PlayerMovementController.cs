@@ -93,6 +93,28 @@ public class PlayerMovementController : NetworkBehaviour
         enemy.GetComponent<EnemyHealth>().DamageEnemy(1);
     }
 
+    public void Interact(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed && isOwned)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 3))
+            {
+                Debug.Log("Hit: " + hit.transform.name);
+                if (hit.transform.tag == "Object")
+                {
+                    hit.transform.GetComponent<ItemBase>().OnPickup();
+                }
+            }
+        }
+    }
+
+    /*[Command]
+    public void CmdPickup(GameObject obj)
+    {
+        
+    }*/
+
     private void ToggleMouse()
     {
         if (mouseLocked)
