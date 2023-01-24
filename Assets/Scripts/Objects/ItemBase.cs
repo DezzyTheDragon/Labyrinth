@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class ItemBase : NetworkBehaviour
+public enum ObjectTags { Object, Weapon, Healing }
+
+public class ItemBase : MonoBehaviour
 {
-    public string objectName = "BaseObject";
+    protected string objectName = "BaseObject";
+    protected ObjectTags objectTag = ObjectTags.Object;
 
     public string GetName()
     {
         return objectName;
+    }
+
+    public ObjectTags GetTag()
+    {
+        return objectTag;
     }
 
     public void OnPickup()

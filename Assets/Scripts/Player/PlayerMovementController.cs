@@ -21,17 +21,22 @@ public class PlayerMovementController : NetworkBehaviour
     private float sensitivity = 1.0f;
 
     private bool mouseLocked = false;
+    private bool isDowned = false;
     private Vector2 cameraRotation;
 
 
     private Controlls playerControlls;
     private CharacterController characterController;
+    private PlayerHealth playerHealth;
+    private PlayerInventory playerInventory;
 
     private void Awake()
     {
         playerControlls = new Controlls();
         playerControlls.PlayerControlls.Enable();
         characterController = GetComponent<CharacterController>();
+        playerHealth = GetComponent<PlayerHealth>();
+        playerInventory = GetComponent<PlayerInventory>();
     }
 
     private void Update()
@@ -70,6 +75,24 @@ public class PlayerMovementController : NetworkBehaviour
         }
     }
 
+    public void Heal(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed && isOwned)
+        {
+            playerInventory.UseHealthPack();
+        }
+    }
+
+    public void GetPrimary(InputAction.CallbackContext context)
+    {
+        
+    }
+
+    public void GetSecondary(InputAction.CallbackContext context)
+    {
+        
+    }
+
     public void Shoot(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed && isOwned)
@@ -103,7 +126,13 @@ public class PlayerMovementController : NetworkBehaviour
                 Debug.Log("Hit: " + hit.transform.name);
                 if (hit.transform.tag == "Object")
                 {
-                    hit.transform.GetComponent<ItemBase>().OnPickup();
+                    ItemBase item = hit.transform.GetComponent<ItemBase>();
+                    item.OnPickup();
+                    playerInventory.AddItem(item);
+                }
+                else if (hit.transform.tag == "Player")
+                {
+                    hit.transform.GetComponent<PlayerMovementController>().RevivePlayer();
                 }
             }
         }
@@ -114,6 +143,20 @@ public class PlayerMovementController : NetworkBehaviour
     {
         
     }*/
+
+    public void SetIsDowned()
+    {
+        isDowned = true;
+        headObject.transform.localPosition = new Vector3(0, 0.5f, 0);
+        //Debug.Log("Player is donwed!");
+    }
+
+    public void RevivePlayer()
+    {
+        isDowned = false;
+        headObject.transform.localPosition = new Vector3(0, 1.5f, 0);
+        playerHealth.Heal(25);
+    }
 
     private void ToggleMouse()
     {
@@ -156,11 +199,14 @@ public class PlayerMovementController : NetworkBehaviour
 
     private void HandleMovement()
     {
-        Vector2 input = playerControlls.PlayerControlls.Movement.ReadValue<Vector2>();
-        Vector3 moveForward = transform.forward * input.y;
-        Vector3 moveRight = transform.right * input.x;
-        Vector3 direction = (moveForward + moveRight).normalized * movementSpeed;
-        direction.y = 0;
-        characterController.Move(direction * Time.deltaTime);
+        if (!isDowned)
+        { 
+            Vector2 input = playerControlls.PlayerControlls.Movement.ReadValue<Vector2>();
+            Vector3 moveForward = transform.forward * input.y;
+            Vector3 moveRight = transform.right * input.x;
+            Vector3 direction = (moveForward + moveRight).normalized * movementSpeed;
+            direction.y = 0;
+            characterController.Move(direction * Time.deltaTime);
+        }
     }
 }

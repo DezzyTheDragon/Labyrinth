@@ -89,6 +89,15 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Heal"",
+                    ""type"": ""Button"",
+                    ""id"": ""fdd15e30-aedf-452c-a50a-1b4fa8c6bf2d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +221,17 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e88f32af-cd63-4b9b-b5ec-e343a5f39483"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Heal"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -227,6 +247,7 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         m_PlayerControlls_Interact = m_PlayerControlls.FindAction("Interact", throwIfNotFound: true);
         m_PlayerControlls_Escape = m_PlayerControlls.FindAction("Escape", throwIfNotFound: true);
         m_PlayerControlls_Shoot = m_PlayerControlls.FindAction("Shoot", throwIfNotFound: true);
+        m_PlayerControlls_Heal = m_PlayerControlls.FindAction("Heal", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -293,6 +314,7 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControlls_Interact;
     private readonly InputAction m_PlayerControlls_Escape;
     private readonly InputAction m_PlayerControlls_Shoot;
+    private readonly InputAction m_PlayerControlls_Heal;
     public struct PlayerControllsActions
     {
         private @Controlls m_Wrapper;
@@ -304,6 +326,7 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_PlayerControlls_Interact;
         public InputAction @Escape => m_Wrapper.m_PlayerControlls_Escape;
         public InputAction @Shoot => m_Wrapper.m_PlayerControlls_Shoot;
+        public InputAction @Heal => m_Wrapper.m_PlayerControlls_Heal;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControlls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -334,6 +357,9 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                 @Shoot.started -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnShoot;
                 @Shoot.performed -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnShoot;
                 @Shoot.canceled -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnShoot;
+                @Heal.started -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnHeal;
+                @Heal.performed -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnHeal;
+                @Heal.canceled -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnHeal;
             }
             m_Wrapper.m_PlayerControllsActionsCallbackInterface = instance;
             if (instance != null)
@@ -359,6 +385,9 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                 @Shoot.started += instance.OnShoot;
                 @Shoot.performed += instance.OnShoot;
                 @Shoot.canceled += instance.OnShoot;
+                @Heal.started += instance.OnHeal;
+                @Heal.performed += instance.OnHeal;
+                @Heal.canceled += instance.OnHeal;
             }
         }
     }
@@ -372,5 +401,6 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnEscape(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnHeal(InputAction.CallbackContext context);
     }
 }
