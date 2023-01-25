@@ -85,12 +85,18 @@ public class PlayerMovementController : NetworkBehaviour
 
     public void GetPrimary(InputAction.CallbackContext context)
     {
-        
+        if (context.phase == InputActionPhase.Performed && isOwned)
+        {
+            playerInventory.ShowPrimary();
+        }
     }
 
     public void GetSecondary(InputAction.CallbackContext context)
     {
-        
+        if (context.phase == InputActionPhase.Performed && isOwned)
+        {
+            playerInventory.ShowSecondary();
+        }
     }
 
     public void Shoot(InputAction.CallbackContext context)
@@ -112,8 +118,8 @@ public class PlayerMovementController : NetworkBehaviour
     [Command]
     public void CmdShoot(GameObject enemy)
     {
-        Debug.Log("Enemy Hit: " + enemy.name);
-        enemy.GetComponent<EnemyHealth>().DamageEnemy(1);
+        //Debug.Log("Enemy Hit: " + enemy.name);
+        enemy.GetComponent<EnemyHealth>().DamageEnemy(playerInventory.CurrentWeapon().GetWeaponDamage());
     }
 
     public void Interact(InputAction.CallbackContext context)

@@ -98,6 +98,24 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Primary"",
+                    ""type"": ""Button"",
+                    ""id"": ""8d4e6c75-1ef3-46a8-9606-191eede33e2f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Secondary"",
+                    ""type"": ""Button"",
+                    ""id"": ""71c7805d-cfd3-4c25-b262-4ee5374a33cb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -232,6 +250,28 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                     ""action"": ""Heal"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f00876f8-3940-4348-a1d4-8c83e77e8a7d"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Primary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9e16e5b9-f13a-4eaf-9956-bb8173fc3646"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Secondary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -248,6 +288,8 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         m_PlayerControlls_Escape = m_PlayerControlls.FindAction("Escape", throwIfNotFound: true);
         m_PlayerControlls_Shoot = m_PlayerControlls.FindAction("Shoot", throwIfNotFound: true);
         m_PlayerControlls_Heal = m_PlayerControlls.FindAction("Heal", throwIfNotFound: true);
+        m_PlayerControlls_Primary = m_PlayerControlls.FindAction("Primary", throwIfNotFound: true);
+        m_PlayerControlls_Secondary = m_PlayerControlls.FindAction("Secondary", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -315,6 +357,8 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControlls_Escape;
     private readonly InputAction m_PlayerControlls_Shoot;
     private readonly InputAction m_PlayerControlls_Heal;
+    private readonly InputAction m_PlayerControlls_Primary;
+    private readonly InputAction m_PlayerControlls_Secondary;
     public struct PlayerControllsActions
     {
         private @Controlls m_Wrapper;
@@ -327,6 +371,8 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         public InputAction @Escape => m_Wrapper.m_PlayerControlls_Escape;
         public InputAction @Shoot => m_Wrapper.m_PlayerControlls_Shoot;
         public InputAction @Heal => m_Wrapper.m_PlayerControlls_Heal;
+        public InputAction @Primary => m_Wrapper.m_PlayerControlls_Primary;
+        public InputAction @Secondary => m_Wrapper.m_PlayerControlls_Secondary;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControlls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -360,6 +406,12 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                 @Heal.started -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnHeal;
                 @Heal.performed -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnHeal;
                 @Heal.canceled -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnHeal;
+                @Primary.started -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnPrimary;
+                @Primary.performed -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnPrimary;
+                @Primary.canceled -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnPrimary;
+                @Secondary.started -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnSecondary;
+                @Secondary.performed -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnSecondary;
+                @Secondary.canceled -= m_Wrapper.m_PlayerControllsActionsCallbackInterface.OnSecondary;
             }
             m_Wrapper.m_PlayerControllsActionsCallbackInterface = instance;
             if (instance != null)
@@ -388,6 +440,12 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                 @Heal.started += instance.OnHeal;
                 @Heal.performed += instance.OnHeal;
                 @Heal.canceled += instance.OnHeal;
+                @Primary.started += instance.OnPrimary;
+                @Primary.performed += instance.OnPrimary;
+                @Primary.canceled += instance.OnPrimary;
+                @Secondary.started += instance.OnSecondary;
+                @Secondary.performed += instance.OnSecondary;
+                @Secondary.canceled += instance.OnSecondary;
             }
         }
     }
@@ -402,5 +460,7 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         void OnEscape(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnHeal(InputAction.CallbackContext context);
+        void OnPrimary(InputAction.CallbackContext context);
+        void OnSecondary(InputAction.CallbackContext context);
     }
 }

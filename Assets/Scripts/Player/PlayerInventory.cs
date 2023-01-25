@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour
 {
-    private WeaponBase primaryWeapon = new PistolItem();
+    [SerializeField]
+    private WeaponBase primaryWeapon;
     private WeaponBase secondaryWeapon;
     private int healthPackCount = 0;
     private WeaponBase heldWeapon;
@@ -15,6 +16,7 @@ public class PlayerInventory : MonoBehaviour
     public Image secondaryIcon;
     public List<Sprite> weaponIcons = new List<Sprite>();
     public List<GameObject> weaponModels = new List<GameObject>();
+    public GameObject primaryWeaponModel;
 
     private PlayerHealth playerHealth;
 
@@ -40,6 +42,23 @@ public class PlayerInventory : MonoBehaviour
             //Heal the player
             healthPackUI.text = healthPackCount.ToString();
             playerHealth.Heal(10);
+        }
+    }
+
+    public void ShowPrimary()
+    {
+        heldWeapon = primaryWeapon;
+        primaryWeaponModel.SetActive(true);
+        weaponModels[secondaryWeapon.GetWeaponID() - 1].SetActive(false);
+    }
+
+    public void ShowSecondary()
+    {
+        if (secondaryWeapon == null)
+        { 
+            heldWeapon = secondaryWeapon;
+            primaryWeaponModel.SetActive(false);
+            weaponModels[secondaryWeapon.GetWeaponID() - 1].SetActive(true);
         }
     }
 
@@ -69,7 +88,9 @@ public class PlayerInventory : MonoBehaviour
         {
             Debug.LogError("Invalid weapon id (must be positive non-zero value)");
         }
+        //If there is already a secondary weapon drop it in the real world
         secondaryIcon.sprite = weaponIcons[weapon.GetWeaponID() - 1];
+        secondaryWeapon = weapon;
     }
 
     private void AddHealthItem()
