@@ -274,6 +274,34 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""MenuControlls"",
+            ""id"": ""6189e6b0-56eb-4e84-a874-07ad87750415"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""0618d7db-e995-4a05-bc74-6c5f0d7139ef"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""759c8817-8bdb-4f2a-88a7-50081a788966"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -290,6 +318,9 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         m_PlayerControlls_Heal = m_PlayerControlls.FindAction("Heal", throwIfNotFound: true);
         m_PlayerControlls_Primary = m_PlayerControlls.FindAction("Primary", throwIfNotFound: true);
         m_PlayerControlls_Secondary = m_PlayerControlls.FindAction("Secondary", throwIfNotFound: true);
+        // MenuControlls
+        m_MenuControlls = asset.FindActionMap("MenuControlls", throwIfNotFound: true);
+        m_MenuControlls_Newaction = m_MenuControlls.FindAction("New action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -450,6 +481,39 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         }
     }
     public PlayerControllsActions @PlayerControlls => new PlayerControllsActions(this);
+
+    // MenuControlls
+    private readonly InputActionMap m_MenuControlls;
+    private IMenuControllsActions m_MenuControllsActionsCallbackInterface;
+    private readonly InputAction m_MenuControlls_Newaction;
+    public struct MenuControllsActions
+    {
+        private @Controlls m_Wrapper;
+        public MenuControllsActions(@Controlls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Newaction => m_Wrapper.m_MenuControlls_Newaction;
+        public InputActionMap Get() { return m_Wrapper.m_MenuControlls; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MenuControllsActions set) { return set.Get(); }
+        public void SetCallbacks(IMenuControllsActions instance)
+        {
+            if (m_Wrapper.m_MenuControllsActionsCallbackInterface != null)
+            {
+                @Newaction.started -= m_Wrapper.m_MenuControllsActionsCallbackInterface.OnNewaction;
+                @Newaction.performed -= m_Wrapper.m_MenuControllsActionsCallbackInterface.OnNewaction;
+                @Newaction.canceled -= m_Wrapper.m_MenuControllsActionsCallbackInterface.OnNewaction;
+            }
+            m_Wrapper.m_MenuControllsActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Newaction.started += instance.OnNewaction;
+                @Newaction.performed += instance.OnNewaction;
+                @Newaction.canceled += instance.OnNewaction;
+            }
+        }
+    }
+    public MenuControllsActions @MenuControlls => new MenuControllsActions(this);
     public interface IPlayerControllsActions
     {
         void OnJump(InputAction.CallbackContext context);
@@ -462,5 +526,9 @@ public partial class @Controlls : IInputActionCollection2, IDisposable
         void OnHeal(InputAction.CallbackContext context);
         void OnPrimary(InputAction.CallbackContext context);
         void OnSecondary(InputAction.CallbackContext context);
+    }
+    public interface IMenuControllsActions
+    {
+        void OnNewaction(InputAction.CallbackContext context);
     }
 }

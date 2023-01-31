@@ -14,6 +14,7 @@ public class PlayerMovementController : NetworkBehaviour
     public GameObject playerModel;
     public GameObject headObject;
     public GameObject playerCamera;
+    public GameObject pausePanel;
 
     [SerializeField]
     private float movementSpeed = 1.0f;
@@ -37,6 +38,8 @@ public class PlayerMovementController : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerInventory = GetComponent<PlayerInventory>();
+
+        //Open settings file and set them
     }
 
     private void Update()
@@ -66,14 +69,47 @@ public class PlayerMovementController : NetworkBehaviour
         }
     }
 
+
+    public void setSensitivity(float sens)
+    {
+        sensitivity = sens;
+    }
+
+    public float getSensitivity()
+    {
+        return sensitivity;
+    }
+
     public void Escape(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed)
         {
-            Application.Quit();
-            //ToggleMouse();
+            //Application.Quit();
+            openPauseMenu();
         }
     }
+
+    private void openPauseMenu()
+    {
+        pausePanel.SetActive(true);
+        ToggleMouse();
+        playerControlls.PlayerControlls.Disable();
+        playerControlls.MenuControlls.Enable();
+    }
+
+    public void Renable()
+    {
+        closePauseMenu();
+    }
+
+    private void closePauseMenu()
+    {
+        pausePanel.SetActive(false);
+        ToggleMouse();
+        playerControlls.PlayerControlls.Enable();
+        playerControlls.MenuControlls.Disable();
+    }
+
 
     public void Heal(InputAction.CallbackContext context)
     {
@@ -129,7 +165,7 @@ public class PlayerMovementController : NetworkBehaviour
             RaycastHit hit;
             if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 3))
             {
-                Debug.Log("Hit: " + hit.transform.name);
+                //Debug.Log("Hit: " + hit.transform.name);
                 if (hit.transform.tag == "Object")
                 {
                     ItemBase item = hit.transform.GetComponent<ItemBase>();
@@ -139,6 +175,12 @@ public class PlayerMovementController : NetworkBehaviour
                 else if (hit.transform.tag == "Player")
                 {
                     hit.transform.GetComponent<PlayerMovementController>().RevivePlayer();
+                }
+                else
+                {
+                    //Nothing wanted was hit assume placeing marker
+                    //Debug.Log("Hit position: " + hit.point);
+                    playerInventory.CmdPlaceMarker(hit.point);
                 }
             }
         }

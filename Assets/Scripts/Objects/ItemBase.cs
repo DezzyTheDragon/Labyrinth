@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public enum ObjectTags { Object, Weapon, Healing }
+public enum ObjectTags { Object, Weapon, Healing, Marker }
 
 public class ItemBase : MonoBehaviour
 {
@@ -20,7 +20,7 @@ public class ItemBase : MonoBehaviour
         return objectTag;
     }
 
-    public void OnPickup()
+    public virtual void OnPickup()
     {
         Debug.Log("Base Object picked up");
         NetworkServer.Destroy(this.gameObject);

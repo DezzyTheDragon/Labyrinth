@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Mirror;
 
-public class PlayerInventory : MonoBehaviour
+public class PlayerInventory : NetworkBehaviour
 {
+    [SerializeField]
+    private GameObject markerPrefab;
     [SerializeField]
     private WeaponBase primaryWeapon;
     private WeaponBase secondaryWeapon;
     private int healthPackCount = 0;
+    private int markerCount = 10;
     private WeaponBase heldWeapon;
 
     public TextMeshProUGUI healthPackUI;
+    public TextMeshProUGUI markerCountUI;
     public Image secondaryIcon;
     public List<Sprite> weaponIcons = new List<Sprite>();
     public List<GameObject> weaponModels = new List<GameObject>();
@@ -27,11 +32,36 @@ public class PlayerInventory : MonoBehaviour
         secondaryIcon.enabled = false;
         playerHealth = GetComponent<PlayerHealth>();
         heldWeapon = primaryWeapon;
+        markerCountUI.text = markerCount.ToString();
     }
 
     public WeaponBase CurrentWeapon()
     {
         return heldWeapon;
+    }
+
+    public void PickupMarker()
+    {
+        markerCount++;
+        markerCountUI.text = markerCount.ToString();
+    }
+
+    [Command]
+    public void CmdPlaceMarker(Vector3 inPosition)
+    {
+        markerCount--;
+        if (markerCount >= 0)
+        {
+            markerCountUI.text = markerCount.ToString();
+            //Instanciate object
+            GameObject newMarker = Instantiate(markerPrefab, new Vector3(inPosition.x, 0, inPosition.z), gameObject.transform.rotation);
+            NetworkServer.Spawn(newMarker);
+        }
+        else
+        {
+            markerCount = 0;
+        }
+
     }
 
     public void UseHealthPack()
@@ -76,6 +106,9 @@ public class PlayerInventory : MonoBehaviour
             case ObjectTags.Healing:
                 //Debug.Log("Healing item picked up");
                 AddHealthItem();
+                break;
+            case ObjectTags.Marker:
+                PickupMarker();
                 break;
         }
     }
