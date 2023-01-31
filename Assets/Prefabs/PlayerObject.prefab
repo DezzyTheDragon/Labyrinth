@@ -1417,7 +1417,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3413412572420955021
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4000,7 +4000,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1424869815470345989
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6773,7 +6773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3402968785145496958
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7114,6 +7114,7 @@ MonoBehaviour:
   headObject: {fileID: 5336377478630120302}
   playerCamera: {fileID: 2207582120842790519}
   pausePanel: {fileID: 2743703043554186283}
+  actionAsset: {fileID: -944628639613478452, guid: 246934fba44b1b04cb4b905371c5a3f2, type: 3}
   movementSpeed: 10
   sensitivity: 0.1
 --- !u!114 &2678242944354326731
@@ -9923,7 +9924,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &554158967716080274
 RectTransform:
   m_ObjectHideFlags: 0

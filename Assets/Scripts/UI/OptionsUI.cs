@@ -92,6 +92,7 @@ public class OptionsUI : MonoBehaviour
 
     public void SetForwardBind()
     {
+        /*
         forwardBindButton.GetComponentInChildren<TextMeshProUGUI>().text = requestString;
 
         movementAction.action.Disable();
@@ -99,6 +100,7 @@ public class OptionsUI : MonoBehaviour
             .OnMatchWaitForAnother(0.1f)
             .OnComplete(operation => FinishBind(forwardBindButton, movementAction, 1))
             .Start();
+        */
     }
 
     public void SetInteractBind()
@@ -179,5 +181,7 @@ public class OptionsUI : MonoBehaviour
             InputControlPath.HumanReadableStringOptions.OmitDevice);
         rebindingOperation.Dispose();
         action.action.Enable();
+        fileReader reader = new fileReader();
+        reader.writeKeyBinds(action);
     }
 }

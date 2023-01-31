@@ -16,6 +16,8 @@ public class PlayerMovementController : NetworkBehaviour
     public GameObject playerCamera;
     public GameObject pausePanel;
 
+    public InputActionAsset actionAsset;
+
     [SerializeField]
     private float movementSpeed = 1.0f;
     [SerializeField]
@@ -24,7 +26,6 @@ public class PlayerMovementController : NetworkBehaviour
     private bool mouseLocked = false;
     private bool isDowned = false;
     private Vector2 cameraRotation;
-
 
     private Controlls playerControlls;
     private CharacterController characterController;
@@ -38,6 +39,7 @@ public class PlayerMovementController : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerInventory = GetComponent<PlayerInventory>();
+        loadSettings();
 
         //Open settings file and set them
     }
@@ -69,6 +71,27 @@ public class PlayerMovementController : NetworkBehaviour
         }
     }
 
+    public void loadSettings()
+    {
+        string rebinds = PlayerPrefs.GetString("rebinds");
+        if (!string.IsNullOrEmpty(rebinds))
+        {
+            actionAsset.LoadBindingOverridesFromJson(rebinds);
+        }
+        float prefFOV = PlayerPrefs.GetFloat("FOV");
+        if (!EqualityComparer<float>.Default.Equals(prefFOV, default(float)) && prefFOV != 0)
+        {
+            playerCamera.GetComponent<Camera>().fieldOfView = prefFOV;
+            //Debug.Log("FOV: " + prefFOV);
+        }
+        float prefSens = PlayerPrefs.GetFloat("Sens");
+        if (!EqualityComparer<float>.Default.Equals(prefSens, default(float)) && prefSens != 0)
+        {
+            sensitivity = prefSens;
+            //Debug.Log("Sens: " + prefSens);
+        }
+        
+    }
 
     public void setSensitivity(float sens)
     {
@@ -99,6 +122,12 @@ public class PlayerMovementController : NetworkBehaviour
 
     public void Renable()
     {
+        string rebinds = actionAsset.SaveBindingOverridesAsJson();
+        //Debug.Log(rebinds);
+        PlayerPrefs.SetString("rebinds", rebinds);
+        //Debug.Log("FOV to save is " + playerCamera.GetComponent<Camera>().fieldOfView);
+        PlayerPrefs.SetFloat("FOV", playerCamera.GetComponent<Camera>().fieldOfView);
+        PlayerPrefs.SetFloat("Sens", sensitivity);
         closePauseMenu();
     }
 
