@@ -46,22 +46,27 @@ public class PlayerInventory : NetworkBehaviour
         markerCountUI.text = markerCount.ToString();
     }
 
-    [Command]
-    public void CmdPlaceMarker(Vector3 inPosition)
+    public void PlaceMarker(Vector3 inPosition)
     {
         markerCount--;
         if (markerCount >= 0)
         {
             markerCountUI.text = markerCount.ToString();
-            //Instanciate object
-            GameObject newMarker = Instantiate(markerPrefab, new Vector3(inPosition.x, 0, inPosition.z), gameObject.transform.rotation);
-            NetworkServer.Spawn(newMarker);
+            
+            CmdPlaceMarker(inPosition);
         }
         else
         {
             markerCount = 0;
         }
+    }
 
+    [Command]
+    public void CmdPlaceMarker(Vector3 inPosition)
+    {
+        //Instanciate object
+        GameObject newMarker = Instantiate(markerPrefab, new Vector3(inPosition.x, 0, inPosition.z), gameObject.transform.rotation);
+        NetworkServer.Spawn(newMarker);
     }
 
     public void UseHealthPack()
@@ -84,7 +89,7 @@ public class PlayerInventory : NetworkBehaviour
 
     public void ShowSecondary()
     {
-        if (secondaryWeapon == null)
+        if (secondaryWeapon != null)
         { 
             heldWeapon = secondaryWeapon;
             primaryWeaponModel.SetActive(false);
@@ -100,11 +105,9 @@ public class PlayerInventory : NetworkBehaviour
                 Debug.Log("Picked up an item");
                 break;
             case ObjectTags.Weapon:
-                //Debug.Log("Weapon " + item.GetName() + " picked up");
                 AddWeapon(item);
                 break;
             case ObjectTags.Healing:
-                //Debug.Log("Healing item picked up");
                 AddHealthItem();
                 break;
             case ObjectTags.Marker:
@@ -115,7 +118,8 @@ public class PlayerInventory : NetworkBehaviour
 
     private void AddWeapon(ItemBase item)
     {
-        WeaponBase weapon = item as WeaponBase;
+        //WeaponBase weapon = item as WeaponBase;
+        WeaponBase weapon = item.gameObject.GetComponent<WeaponBase>();
         secondaryIcon.enabled = true;
         if (weapon.GetWeaponID() == 0)
         {

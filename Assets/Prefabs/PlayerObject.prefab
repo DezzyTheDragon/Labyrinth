@@ -7114,6 +7114,7 @@ MonoBehaviour:
   headObject: {fileID: 5336377478630120302}
   playerCamera: {fileID: 2207582120842790519}
   pausePanel: {fileID: 2743703043554186283}
+  playerCanvas: {fileID: 8594874963744466987}
   actionAsset: {fileID: -944628639613478452, guid: 246934fba44b1b04cb4b905371c5a3f2, type: 3}
   movementSpeed: 10
   sensitivity: 0.1
@@ -8798,7 +8799,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5995421925023954744
 RectTransform:
   m_ObjectHideFlags: 0

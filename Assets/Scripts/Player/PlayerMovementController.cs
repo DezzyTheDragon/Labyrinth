@@ -11,17 +11,17 @@ using UnityEngine.InputSystem.HID;
 
 public class PlayerMovementController : NetworkBehaviour
 {
+    [Header("Object References")]
     public GameObject playerModel;
     public GameObject headObject;
     public GameObject playerCamera;
     public GameObject pausePanel;
-
+    public GameObject playerCanvas;
     public InputActionAsset actionAsset;
 
-    [SerializeField]
-    private float movementSpeed = 1.0f;
-    [SerializeField]
-    private float sensitivity = 1.0f;
+    [Header("Variables")]
+    [SerializeField] private float movementSpeed = 1.0f;
+    [SerializeField] private float sensitivity = 1.0f;
 
     private bool mouseLocked = false;
     private bool isDowned = false;
@@ -32,38 +32,42 @@ public class PlayerMovementController : NetworkBehaviour
     private PlayerHealth playerHealth;
     private PlayerInventory playerInventory;
 
+    //Runs when the object is enabled
     private void Awake()
     {
+        //Initilize and get variables
         playerControlls = new Controlls();
         playerControlls.PlayerControlls.Enable();
         characterController = GetComponent<CharacterController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerInventory = GetComponent<PlayerInventory>();
         loadSettings();
-
-        //Open settings file and set them
     }
 
+    //Runs on every frame
     private void Update()
     {
+        //Check if loaded into the level
         if (SceneManager.GetActiveScene().name == "PrototypeMap")
         {
-
+            //Enable the relevent components for the local player while leaving them
+            //  disabled for the remote players
             if (!playerModel.activeSelf)
             {
                 playerModel.SetActive(true);
                 if (isOwned)
                 {
                     playerCamera.SetActive(true);
+                    playerCanvas.SetActive(true);
                 }
                 else
                 {
                     playerCamera.SetActive(false);
+                    playerCanvas.SetActive(false);
                 }
                 SetPosition();
                 ToggleMouse();
             }
-            //if (hasAuthority)
             if (isOwned)
             {
                 HandleInput();
@@ -71,6 +75,7 @@ public class PlayerMovementController : NetworkBehaviour
         }
     }
 
+    //Load the player preferences
     public void loadSettings()
     {
         string rebinds = PlayerPrefs.GetString("rebinds");
@@ -82,36 +87,37 @@ public class PlayerMovementController : NetworkBehaviour
         if (!EqualityComparer<float>.Default.Equals(prefFOV, default(float)) && prefFOV != 0)
         {
             playerCamera.GetComponent<Camera>().fieldOfView = prefFOV;
-            //Debug.Log("FOV: " + prefFOV);
         }
         float prefSens = PlayerPrefs.GetFloat("Sens");
         if (!EqualityComparer<float>.Default.Equals(prefSens, default(float)) && prefSens != 0)
         {
             sensitivity = prefSens;
-            //Debug.Log("Sens: " + prefSens);
         }
         
     }
 
+    //Set the mouse sensitivity from the options menu
     public void setSensitivity(float sens)
     {
         sensitivity = sens;
     }
 
+    //Gets the mouse sensitivity value for the options to display
     public float getSensitivity()
     {
         return sensitivity;
     }
 
+    //Function for escape action
     public void Escape(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Performed)
+        if (context.phase == InputActionPhase.Performed && isOwned)
         {
-            //Application.Quit();
             openPauseMenu();
         }
     }
 
+    //Opens the pause menu and disables player controlls while in menu
     private void openPauseMenu()
     {
         pausePanel.SetActive(true);
@@ -120,17 +126,17 @@ public class PlayerMovementController : NetworkBehaviour
         playerControlls.MenuControlls.Enable();
     }
 
+    //Saves preferences, re-enables player controlls
     public void Renable()
     {
         string rebinds = actionAsset.SaveBindingOverridesAsJson();
-        //Debug.Log(rebinds);
         PlayerPrefs.SetString("rebinds", rebinds);
-        //Debug.Log("FOV to save is " + playerCamera.GetComponent<Camera>().fieldOfView);
         PlayerPrefs.SetFloat("FOV", playerCamera.GetComponent<Camera>().fieldOfView);
         PlayerPrefs.SetFloat("Sens", sensitivity);
         closePauseMenu();
     }
 
+    //Closes the menu UI
     private void closePauseMenu()
     {
         pausePanel.SetActive(false);
@@ -139,7 +145,7 @@ public class PlayerMovementController : NetworkBehaviour
         playerControlls.MenuControlls.Disable();
     }
 
-
+    //Uses a healthpack in the inventory to heal
     public void Heal(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed && isOwned)
@@ -148,6 +154,7 @@ public class PlayerMovementController : NetworkBehaviour
         }
     }
 
+    //Switches to the primary weapon
     public void GetPrimary(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Performed && isOwned)
@@ -194,12 +201,11 @@ public class PlayerMovementController : NetworkBehaviour
             RaycastHit hit;
             if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 3))
             {
-                //Debug.Log("Hit: " + hit.transform.name);
                 if (hit.transform.tag == "Object")
                 {
                     ItemBase item = hit.transform.GetComponent<ItemBase>();
-                    item.OnPickup();
                     playerInventory.AddItem(item);
+                    CmdPickupItem(item);
                 }
                 else if (hit.transform.tag == "Player")
                 {
@@ -207,19 +213,17 @@ public class PlayerMovementController : NetworkBehaviour
                 }
                 else
                 {
-                    //Nothing wanted was hit assume placeing marker
-                    //Debug.Log("Hit position: " + hit.point);
-                    playerInventory.CmdPlaceMarker(hit.point);
+                    playerInventory.PlaceMarker(hit.point);
                 }
             }
         }
     }
 
-    /*[Command]
-    public void CmdPickup(GameObject obj)
+    [Command]
+    public void CmdPickupItem(ItemBase item)
     {
-        
-    }*/
+        item.OnPickup();
+    }
 
     public void SetIsDowned()
     {

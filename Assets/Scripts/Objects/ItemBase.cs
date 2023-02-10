@@ -5,7 +5,7 @@ using Mirror;
 
 public enum ObjectTags { Object, Weapon, Healing, Marker }
 
-public class ItemBase : MonoBehaviour
+public class ItemBase : NetworkBehaviour
 {
     protected string objectName = "BaseObject";
     protected ObjectTags objectTag = ObjectTags.Object;
@@ -22,7 +22,7 @@ public class ItemBase : MonoBehaviour
 
     public virtual void OnPickup()
     {
-        Debug.Log("Base Object picked up");
+        //Debug.Log("Base Object picked up");
         NetworkServer.Destroy(this.gameObject);
     }
 }
