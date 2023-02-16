@@ -11,7 +11,11 @@ public class SkinUI : MonoBehaviour
     {
         skinDatabase = new skinDatabase();
         ulong steamID = (ulong)SteamUser.GetSteamID();
-        Debug.Log(steamID);
-        skinDatabase.getEntry(steamID);
+        //Debug.Log(steamID);
+        //skinDatabase.getEntry(steamID);
+        //skinDatabase.updateEntry(steamID, databaseCol.PLAYER, 2);
+        //skinDatabase.DEBUG_RESET(steamID);
+        //SkinData temp = skinDatabase.getEntry(steamID);
+        //Debug.Log("Player: " + temp.playerSkin + " Pistol: " + temp.pistolSkin + " Rifle: " + temp.rifleSkin);
     }
 }
