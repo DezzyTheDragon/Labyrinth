@@ -15,13 +15,19 @@ public class EnemyHealth : NetworkBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
+        if (healthText != null)
+        { 
+            healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        UIContainer.transform.LookAt(LobbyController.Instance.LocalPlayerObject.transform);
+        if (UIContainer != null)
+        { 
+            UIContainer.transform.LookAt(LobbyController.Instance.LocalPlayerObject.transform);
+        }
     }
 
     public void DamageEnemy(int damage)
@@ -36,6 +42,9 @@ public class EnemyHealth : NetworkBehaviour
 
     public void UpdateEnemyHealth(int oldVal, int newVal)
     {
-        healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
+        if (healthText != null)
+        { 
+            healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
+        }
     }
 }
