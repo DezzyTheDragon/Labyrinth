@@ -99,6 +99,7 @@ public class RangedEnemyAI : MonoBehaviour
             {
                 lastFired = Time.time + cooldown;
                 GameObject projectile = Instantiate(projectilePrefab, shootSpawn.transform.position, shootSpawn.transform.rotation);
+                projectile.GetComponent<Projectile>().SetDirection(direction.normalized);
                 NetworkServer.Spawn(projectile);
             }
         }
