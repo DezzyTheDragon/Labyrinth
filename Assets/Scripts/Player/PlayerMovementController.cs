@@ -48,7 +48,7 @@ public class PlayerMovementController : NetworkBehaviour
     private void Update()
     {
         //Check if loaded into the level
-        if (SceneManager.GetActiveScene().name == "PrototypeMap")
+        if (SceneManager.GetActiveScene().name == "PrototypeMap" || SceneManager.GetActiveScene().name == "Maze")
         {
             //Enable the relevent components for the local player while leaving them
             //  disabled for the remote players
