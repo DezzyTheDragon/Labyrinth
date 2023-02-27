@@ -2,12 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.AI;
+using Mirror;
+using Unity.AI.Navigation;
 
-
-
-public class MazeGeneration : MonoBehaviour
+public class MazeGeneration : NetworkBehaviour
 {
     public GameObject p_mazeCell;
+    public GameObject p_enemy;
+    public GameObject p_healing;
+    public GameObject p_rifle;
+    public GameObject mazeParent;
     public int mazeSize = 5;
 
     private GameObject[,] maze;
@@ -25,8 +30,44 @@ public class MazeGeneration : MonoBehaviour
         maze = new GameObject[mazeSize, mazeSize];
         targetPos.x = 0;
         targetPos.z = 0;
-        PlaceCells();
-        BreakWalls();
+        if (isServer)
+        { 
+            PlaceCells();
+            BreakWalls();
+            SpawnItems();
+        }
+    }
+
+    private void SpawnItems()
+    {
+        int enemyCount = Random.Range(1, 6);
+        int healingItemsCount = Random.Range(0, 3);
+        int rifleProbability = Random.Range(1, 101);
+        for (int e = 0; e < enemyCount; e++)
+        {
+            int x = Random.Range(0, mazeSize);
+            int z = Random.Range(0, mazeSize);
+            Vector3 pos = new Vector3(x * 10, 0, z * 10);
+            GameObject newEnemy = Instantiate(p_enemy, pos, Quaternion.identity);
+            NetworkServer.Spawn(newEnemy);
+
+        }
+        for (int h = 0; h < healingItemsCount; h++)
+        {
+            int x = Random.Range(0, mazeSize);
+            int z = Random.Range(0, mazeSize);
+            Vector3 pos = new Vector3(x * 10, 0, z * 10);
+            GameObject newHealth = Instantiate(p_healing, pos, Quaternion.identity);
+            NetworkServer.Spawn(newHealth);
+        }
+        if (rifleProbability < 25)
+        {
+            int x = Random.Range(0, mazeSize);
+            int z = Random.Range(0, mazeSize);
+            Vector3 pos = new Vector3(x * 10, 0, z * 10);
+            GameObject newRifle = Instantiate(p_rifle, pos, Quaternion.identity);
+            NetworkServer.Spawn(newRifle);
+        }
     }
 
     private void PlaceCells()
@@ -35,11 +76,15 @@ public class MazeGeneration : MonoBehaviour
         {
             for (int z = 0; z < mazeSize; z++)
             {
-                Vector3 position = new Vector3((x * 10), 0, (z * 10));
+                Vector3 position = new Vector3((x * 10) - 5, 0, (z * 10) - 5);
                 GameObject cell = Instantiate(p_mazeCell, position, Quaternion.identity);
+                cell.transform.parent = mazeParent.transform;
+                NetworkServer.Spawn(cell);
                 maze[x,z] = cell;
             }
         }
+
+        mazeParent.GetComponent<NavMeshSurface>().BuildNavMesh();
     }
 
     private bool CheckCanMove()
