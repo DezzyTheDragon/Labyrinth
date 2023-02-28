@@ -12,6 +12,7 @@ public class MazeGeneration : NetworkBehaviour
     public GameObject p_enemy;
     public GameObject p_healing;
     public GameObject p_rifle;
+    public GameObject p_exit;
     public GameObject mazeParent;
     public int mazeSize = 5;
 
@@ -43,6 +44,12 @@ public class MazeGeneration : NetworkBehaviour
         int enemyCount = Random.Range(1, 6);
         int healingItemsCount = Random.Range(0, 3);
         int rifleProbability = Random.Range(1, 101);
+        int exitLocation = Random.Range(0, mazeSize + 1);
+        {
+            Vector3 pos = new Vector3(exitLocation * 10, 0, (mazeSize - 1) * 10);
+            GameObject exit = Instantiate(p_exit, pos, Quaternion.identity);
+            NetworkServer.Spawn(exit);
+        }
         for (int e = 0; e < enemyCount; e++)
         {
             int x = Random.Range(0, mazeSize);

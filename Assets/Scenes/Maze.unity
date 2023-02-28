@@ -384,6 +384,7 @@ MonoBehaviour:
   p_enemy: {fileID: 5623964957415795016, guid: 0e7d81da74abc9446a31984c954706ea, type: 3}
   p_healing: {fileID: 6282079836422508546, guid: 8a2b21f781421cd4cafc29a21057020b, type: 3}
   p_rifle: {fileID: 315979379839899767, guid: e77a9547334ad164199af2c4d44013b2, type: 3}
+  p_exit: {fileID: 218008091804996126, guid: db37e5413935b334e8533ca1ffc992b3, type: 3}
   mazeParent: {fileID: 664464559}
   mazeSize: 10
 --- !u!4 &1776315944

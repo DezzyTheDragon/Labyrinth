@@ -7,6 +7,9 @@ using Mirror;
 
 public class PlayerInventory : NetworkBehaviour
 {
+    [Header("Skins")]
+    public List<Material> pistolSkins = new List<Material>();
+
     [SerializeField]
     private GameObject markerPrefab;
     [SerializeField]
@@ -33,6 +36,12 @@ public class PlayerInventory : NetworkBehaviour
         playerHealth = GetComponent<PlayerHealth>();
         heldWeapon = primaryWeapon;
         markerCountUI.text = markerCount.ToString();
+        SetMaterial();
+    }
+
+    private void SetMaterial()
+    {
+        primaryWeaponModel.GetComponentInChildren<MeshRenderer>().material = pistolSkins[EnabledSkin.enabledPistolSkinID];
     }
 
     public WeaponBase CurrentWeapon()

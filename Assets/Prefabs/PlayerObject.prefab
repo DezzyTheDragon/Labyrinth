@@ -7197,6 +7197,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  pistolSkins:
+  - {fileID: 2100000, guid: 7dcdac84a95898f4fbdc8f6bcbae2d69, type: 2}
+  - {fileID: 2100000, guid: 3a8d5bc00c6d27049a821a26b8d9d3bf, type: 2}
+  - {fileID: 2100000, guid: 7f5c86feb96586a4e9e30adacfb19d05, type: 2}
+  - {fileID: 2100000, guid: fbaa3b2a1b526144e88fbc9a9010fc5b, type: 2}
+  - {fileID: 2100000, guid: b51a4451ab3d7284f9fe2207007ae391, type: 2}
   markerPrefab: {fileID: 392400127105715797, guid: 30ead1f31a04f9242860296da56e8809, type: 3}
   primaryWeapon: {fileID: 8163480213576388072}
   healthPackUI: {fileID: 8276956683438157810}
